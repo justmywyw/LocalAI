@@ -20,6 +20,7 @@ import (
 
 const (
 	HuggingFacePrefix = "huggingface://"
+	ModelScopePrefix  = "modelscope://"
 	OCIPrefix         = "oci://"
 	OllamaPrefix      = "ollama://"
 	HTTPPrefix        = "http://"
@@ -125,6 +126,7 @@ func (u URI) LooksLikeURL() bool {
 	return strings.HasPrefix(string(u), HTTPPrefix) ||
 		strings.HasPrefix(string(u), HTTPSPrefix) ||
 		strings.HasPrefix(string(u), HuggingFacePrefix) ||
+		strings.HasPrefix(string(u), ModelScopePrefix) ||
 		strings.HasPrefix(string(u), GithubURI) ||
 		strings.HasPrefix(string(u), OllamaPrefix) ||
 		strings.HasPrefix(string(u), OCIPrefix) ||
@@ -185,6 +187,23 @@ func (s URI) ResolveURL() string {
 		}
 
 		return fmt.Sprintf("https://huggingface.co/%s/%s/resolve/%s/%s", owner, repo, branch, filepath)
+	case strings.HasPrefix(string(s), ModelScopePrefix):
+		repository := strings.Replace(string(s), ModelScopePrefix, "", 1)
+		// convert repository to a full URL.
+		// e.g. Qwen/Qwen2.5-7B-Instruct-GGUF/qwen2.5-7b-instruct-q2_k.gguf@master -> https://modelscope.cn/models/Qwen/Qwen2.5-7B-Instruct-GGUF/resolve/master/qwen2.5-7b-instruct-q2_k.gguf
+		owner := strings.Split(repository, "/")[0]
+		repo := strings.Split(repository, "/")[1]
+
+		branch := "master"
+		if strings.Contains(repo, "@") {
+			branch = strings.Split(repository, "@")[1]
+		}
+		filepath := strings.Split(repository, "/")[2]
+		if strings.Contains(filepath, "@") {
+			filepath = strings.Split(filepath, "@")[0]
+		}
+
+		return fmt.Sprintf("https://modelscope.cn/models/%s/%s/resolve/%s/%s", owner, repo, branch, filepath)
 	}
 
 	return string(s)

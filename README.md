@@ -80,6 +80,8 @@ To load models:
 local-ai run llama-3.2-1b-instruct:q4_k_m
 # Start LocalAI with the phi-2 model directly from huggingface
 local-ai run huggingface://TheBloke/phi-2-GGUF/phi-2.Q8_0.gguf
+# Start LocalAI with the qwen-2.5 model directly from modelscope
+local-ai run modelscope://Qwen/Qwen2.5-0.5B-Instruct-GGUF/qwen2.5-0.5b-instruct-q2_k.gguf
 # Install and run a model from the Ollama OCI registry
 local-ai run ollama://gemma:2b
 # Run a model from a configuration file
